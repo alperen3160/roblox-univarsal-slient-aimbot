@@ -1,6 +1,6 @@
 ✅ What’s Inside This Script?
 
-🎉%50 Mobile support
+🟡 Updating For Mobile Support
 
 🎯 Slient aimbot:
 Automatically locks the player's camera towards the closest enemy's head when shooting. The camera only snaps momentarily and returns to its original view, making it "slient" and less obvious.
