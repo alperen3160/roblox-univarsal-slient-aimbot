@@ -12,7 +12,9 @@ A visual circle around your cursor that shows your aimbot range. It supports a t
 Shows other players' names above their heads. It can be toggled on or off.
 
 🟪 Highlight Boxes:
+
 Adds glowing outlines (highlight boxes) around other players, making them easier to spot through walls.
+
 Added rainbow
 
 🏃 WalkSpeed & JumpPower Sliders:
