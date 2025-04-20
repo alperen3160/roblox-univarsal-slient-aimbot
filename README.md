@@ -1,6 +1,6 @@
 ✅ What’s Inside This Script?
 
-🟡 Updating For Mobile Support
+
 
 🎯 Slient aimbot:
 Automatically locks the player's camera towards the closest enemy's head when shooting. The camera only snaps momentarily and returns to its original view, making it "slient" and less obvious.
@@ -22,6 +22,11 @@ Adds glowing outlines (highlight boxes) around other players, making them easier
 A GUI lets you adjust how fast you move and how high you jump in-game.
 
 😎 Working all Executors
+
+🎆🎆Added Aimbot for Mobile🎉🎉
+❌Dont Use Slient Aimbot its for Pc
+
+
 
 ![Gui](https://github.com/alperen3160/roblox-univarsal-slient-aimbot/blob/main/pics/sdkopakdssa.png?raw=true)
 
