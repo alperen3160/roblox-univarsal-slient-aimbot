@@ -13,9 +13,9 @@ Shows other players' names above their heads. It can be toggled on or off.
 
 🟪 Highlight Boxes:
 
-Adds glowing outlines (highlight boxes) around other players, making them easier to spot through walls.
+Adds glowing outlines (highlight boxes) around other players, making them easier to spot through walls,
 
-Added rainbow
+🌈Added rainbow.
 
 🏃 WalkSpeed & JumpPower Sliders:
 A GUI lets you adjust how fast you move and how high you jump in-game.
