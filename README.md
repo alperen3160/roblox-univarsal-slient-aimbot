@@ -4,6 +4,7 @@
 
 🎯 Slient aimbot:
 Automatically locks the player's camera towards the closest enemy's head when shooting. The camera only snaps momentarily and returns to its original view, making it "silent" and less obvious.
+don't hold it down, it won't work!
 
 🔴 FOV Circle:
 A visual circle around your cursor that shows your aimbot range. It supports a toggleable rainbow color effect for style.
