@@ -12,7 +12,11 @@ local Colors = {
     SliderThumb = Color3.fromRGB(0, 170, 255),
     Button = Color3.fromRGB(40, 40, 50),
     ButtonHover = Color3.fromRGB(50, 50, 60),
-    ButtonClick = Color3.fromRGB(60, 60, 70)
+    ButtonClick = Color3.fromRGB(60, 60, 70),
+    ColorPickerBackground = Color3.fromRGB(35, 35, 40),
+    ColorPickerBorder = Color3.fromRGB(60, 60, 65),
+    ColorPickerCursor = Color3.fromRGB(255, 255, 255),
+    ColorPickerCursorBorder = Color3.fromRGB(0, 170, 255)
 }
 
 -- Font
@@ -21,9 +25,10 @@ local Font = Enum.Font.Gotham
 -- Tab oluşturma
 function GuiLibrary:CreateTab(name)
     local tab = Instance.new("Frame")
-    tab.Size = UDim2.new(0.2, 0, 0.8, 0)
-    tab.Position = UDim2.new(0.4, 0, 0.1, 0)
+    tab.Size = UDim2.new(0.25, 0, 0.5, 0)
+    tab.Position = UDim2.new(0.375, 0, 0.25, 0)
     tab.BackgroundColor3 = Colors.Background
+    tab.BorderSizePixel = 0
     
     -- Gölgeli efekt
     local shadow = Instance.new("ImageLabel")
@@ -47,9 +52,26 @@ function GuiLibrary:CreateTab(name)
     content.Size = UDim2.new(1, 0, 0.8, 0)
     content.Position = UDim2.new(0, 0, 0.1, 0)
     content.BackgroundColor3 = Colors.Accent
+    content.BorderSizePixel = 0
     content.ScrollBarThickness = 4
     content.ScrollBarImageColor3 = Colors.TextSecondary
     content.Parent = tab
+    
+    -- Hover efekti
+    local hoverEffect = Instance.new("Frame")
+    hoverEffect.Size = UDim2.new(1, 0, 1, 0)
+    hoverEffect.BackgroundColor3 = Colors.Accent
+    hoverEffect.BorderSizePixel = 0
+    hoverEffect.BackgroundTransparency = 1
+    hoverEffect.Parent = tab
+    
+    tab.MouseEnter:Connect(function()
+        hoverEffect.BackgroundTransparency = 0.8
+    end)
+    
+    tab.MouseLeave:Connect(function()
+        hoverEffect.BackgroundTransparency = 1
+    end)
     
     return content
 end
@@ -249,47 +271,97 @@ function GuiLibrary:CreateButton(tab, text, callback)
     return buttonFrame
 end
 
--- Colorpicker oluşturma
+-- ColorPicker oluşturma
 function GuiLibrary:CreateColorPicker(tab, callback)
     local pickerFrame = Instance.new("Frame")
-    pickerFrame.Size = UDim2.new(1, 0, 0.3, 0)
-    pickerFrame.BackgroundColor3 = Colors.Accent
+    pickerFrame.Size = UDim2.new(1, 0, 0.4, 0)
+    pickerFrame.BackgroundColor3 = Colors.Background
+    pickerFrame.BorderSizePixel = 0
     
-    local colorButton = Instance.new("TextButton")
-    colorButton.Size = UDim2.new(1, 0, 0.1, 0)
-    colorButton.Text = "Renk Seç"
-    colorButton.TextColor3 = Colors.Text
-    colorButton.TextSize = 16
-    colorButton.Font = Font
-    colorButton.BackgroundColor3 = Colors.ToggleOn
-    colorButton.AutoButtonColor = false
-    
+    -- Renk kutusu
     local colorBox = Instance.new("Frame")
-    colorBox.Size = UDim2.new(1, 0, 0.2, 0)
-    colorBox.Position = UDim2.new(0, 0, 0.1, 0)
+    colorBox.Size = UDim2.new(0.2, 0, 0.2, 0)
+    colorBox.Position = UDim2.new(0.8, 0, 0.1, 0)
     colorBox.BackgroundColor3 = Colors.ToggleOn
+    colorBox.BorderSizePixel = 0
+    
+    -- Renk kutusu kenarlığı
+    local colorBoxBorder = Instance.new("Frame")
+    colorBoxBorder.Size = UDim2.new(1, 0, 1, 0)
+    colorBoxBorder.Position = UDim2.new(0, -1, 0, -1)
+    colorBoxBorder.BackgroundColor3 = Colors.ColorPickerBorder
+    colorBoxBorder.BorderSizePixel = 0
+    colorBoxBorder.Parent = colorBox
+    
+    -- Seçenek kutusu
+    local optionsFrame = Instance.new("Frame")
+    optionsFrame.Size = UDim2.new(1, 0, 0.2, 0)
+    optionsFrame.Position = UDim2.new(0, 0, 0.3, 0)
+    optionsFrame.BackgroundColor3 = Colors.Accent
+    optionsFrame.BorderSizePixel = 0
+    
+    -- RGB değerleri
+    local rgbText = Instance.new("TextLabel")
+    rgbText.Size = UDim2.new(1, 0, 1, 0)
+    rgbText.Text = "RGB: 255, 0, 0"
+    rgbText.TextColor3 = Colors.Text
+    rgbText.TextSize = 14
+    rgbText.Font = Font
+    rgbText.Parent = optionsFrame
     
     local currentColor = Color3.fromRGB(255, 0, 0)
     
-    colorButton.MouseButton1Click:Connect(function()
+    colorBox.MouseButton1Click:Connect(function()
         local picker = Instance.new("ScreenGui")
         local pickerFrame = Instance.new("Frame")
-        pickerFrame.Size = UDim2.new(0.2, 0, 0.2, 0)
-        pickerFrame.Position = UDim2.new(0.4, 0, 0.4, 0)
-        pickerFrame.BackgroundColor3 = Colors.Background
+        pickerFrame.Size = UDim2.new(0.3, 0, 0.3, 0)
+        pickerFrame.Position = UDim2.new(0.35, 0, 0.35, 0)
+        pickerFrame.BackgroundColor3 = Colors.ColorPickerBackground
+        pickerFrame.BorderSizePixel = 0
         pickerFrame.Parent = picker
         
+        -- Gölgeli efekt
+        local pickerShadow = Instance.new("ImageLabel")
+        pickerShadow.Size = UDim2.new(1, 4, 1, 4)
+        pickerShadow.Position = UDim2.new(0, -2, 0, -2)
+        pickerShadow.Image = "rbxassetid://1316045217"
+        pickerShadow.BackgroundTransparency = 1
+        pickerShadow.ZIndex = 0
+        pickerShadow.Parent = pickerFrame
+        
+        -- Renk seçici
         local colorPicker = Instance.new("Frame")
-        colorPicker.Size = UDim2.new(1, 0, 1, 0)
+        colorPicker.Size = UDim2.new(0.8, 0, 0.8, 0)
+        colorPicker.Position = UDim2.new(0.1, 0, 0.1, 0)
         colorPicker.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        colorPicker.BorderSizePixel = 0
         colorPicker.Parent = pickerFrame
         
-        local colorPickerCursor = Instance.new("Frame")
-        colorPickerCursor.Size = UDim2.new(0.02, 0, 0.02, 0)
-        colorPickerCursor.BackgroundColor3 = Colors.Background
-        colorPickerCursor.Parent = colorPicker
+        -- Renk seçici kenarlığı
+        local pickerBorder = Instance.new("Frame")
+        pickerBorder.Size = UDim2.new(1, 0, 1, 0)
+        pickerBorder.Position = UDim2.new(0, -1, 0, -1)
+        pickerBorder.BackgroundColor3 = Colors.ColorPickerBorder
+        pickerBorder.BorderSizePixel = 0
+        pickerBorder.Parent = colorPicker
         
-        colorPicker.MouseButton1Down:Connect(function(x, y)
+        -- Seçici imleci
+        local pickerCursor = Instance.new("Frame")
+        pickerCursor.Size = UDim2.new(0.05, 0, 0.05, 0)
+        pickerCursor.BackgroundColor3 = Colors.ColorPickerCursor
+        pickerCursor.BorderSizePixel = 0
+        pickerCursor.Parent = colorPicker
+        
+        -- Seçici imleci kenarlığı
+        local cursorBorder = Instance.new("Frame")
+        cursorBorder.Size = UDim2.new(1, 0, 1, 0)
+        cursorBorder.Position = UDim2.new(0, -1, 0, -1)
+        cursorBorder.BackgroundColor3 = Colors.ColorPickerCursorBorder
+        cursorBorder.BorderSizePixel = 0
+        cursorBorder.Parent = pickerCursor
+        
+        -- Renk seçme fonksiyonu
+        local function updateColor(x, y)
             local relativeX = (x - colorPicker.AbsolutePosition.X) / colorPicker.AbsoluteSize.X
             local relativeY = (y - colorPicker.AbsolutePosition.Y) / colorPicker.AbsoluteSize.Y
             
@@ -299,15 +371,39 @@ function GuiLibrary:CreateColorPicker(tab, callback)
             
             currentColor = Color3.fromRGB(r, g, b)
             colorBox.BackgroundColor3 = currentColor
+            rgbText.Text = string.format("RGB: %d, %d, %d", r, g, b)
+            
             if callback then callback(currentColor) end
-            picker:Destroy()
+            
+            -- İmleci güncelle
+            pickerCursor.Position = UDim2.new(relativeX - 0.025, 0, relativeY - 0.025, 0)
+        end
+        
+        -- Drag ve drop özelliği
+        local isDragging = false
+        colorPicker.MouseButton1Down:Connect(function(x, y)
+            isDragging = true
+            updateColor(x, y)
+        end)
+        
+        game:GetService("UserInputService").InputChanged:Connect(function(input)
+            if isDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                updateColor(input.Position.X, input.Position.Y)
+            end
+        end)
+        
+        game:GetService("UserInputService").InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                isDragging = false
+                picker:Destroy()
+            end
         end)
         
         picker.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
     end)
     
-    colorButton.Parent = pickerFrame
     colorBox.Parent = pickerFrame
+    optionsFrame.Parent = pickerFrame
     pickerFrame.Parent = tab
     return pickerFrame
 end
