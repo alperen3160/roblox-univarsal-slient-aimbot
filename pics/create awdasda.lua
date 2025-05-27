@@ -1,202 +1,223 @@
--- NovaUI v2 by ChatGPT
--- Modern tasarım, üst sekme, farklı GUI ve Orion işlevleri
+--// NovaUI v3 - ChatGPT Edition
+-- Şık giriş, hover animasyon, RGB ColorPicker, Başlık özelleştirilebilir
 
 local NovaUI = {}
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
-local gui = Instance.new("ScreenGui", game.CoreGui)
-gui.Name = "NovaUI"
-gui.ResetOnSpawn = false
+function NovaUI:Init(config)
+    config = config or {}
+    config.Title = config.Title or "NovaUI"
+    config.Intro = config.Intro ~= false
 
-local main = Instance.new("Frame", gui)
-main.Size = UDim2.new(0, 600, 0, 420)
-main.Position = UDim2.new(0.5, -300, 0.5, -210)
-main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-main.BackgroundTransparency = 0.1
-main.BorderSizePixel = 0
-main.Active = true
-main.Draggable = true
-Instance.new("UICorner", main).CornerRadius = UDim.new(0, 6)
+    local gui = Instance.new("ScreenGui", game.CoreGui)
+    gui.Name = "NovaUIv3"
+    gui.ResetOnSpawn = false
 
-local tabBar = Instance.new("Frame", main)
-tabBar.Size = UDim2.new(1, 0, 0, 35)
-tabBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-Instance.new("UICorner", tabBar).CornerRadius = UDim.new(0, 4)
-Instance.new("UIListLayout", tabBar).FillDirection = Enum.FillDirection.Horizontal
+    local main = Instance.new("Frame", gui)
+    main.Size = UDim2.new(0, 600, 0, 400)
+    main.Position = UDim2.new(0.5, -300, 0.5, -200)
+    main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    main.BackgroundTransparency = 0
+    main.BorderSizePixel = 0
+    main.ClipsDescendants = true
+    main.Visible = false
+    Instance.new("UICorner", main).CornerRadius = UDim.new(0, 8)
 
-local contentHolder = Instance.new("Frame", main)
-contentHolder.Position = UDim2.new(0, 0, 0, 40)
-contentHolder.Size = UDim2.new(1, 0, 1, -40)
-contentHolder.BackgroundTransparency = 1
+    local title = Instance.new("TextLabel", main)
+    title.Size = UDim2.new(1, 0, 0, 40)
+    title.BackgroundTransparency = 1
+    title.Text = config.Title
+    title.Font = Enum.Font.GothamBlack
+    title.TextSize = 20
+    title.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-function NovaUI:CreateTab(name)
-	local tabBtn = Instance.new("TextButton", tabBar)
-	tabBtn.Size = UDim2.new(0, 100, 1, 0)
-	tabBtn.Text = name
-	tabBtn.Font = Enum.Font.GothamBold
-	tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-	tabBtn.TextSize = 14
-	tabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-	Instance.new("UICorner", tabBtn).CornerRadius = UDim.new(0, 4)
+    local tabBar = Instance.new("Frame", main)
+    tabBar.Size = UDim2.new(1, 0, 0, 30)
+    tabBar.Position = UDim2.new(0, 0, 0, 40)
+    tabBar.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+    Instance.new("UICorner", tabBar).CornerRadius = UDim.new(0, 4)
+    local layout = Instance.new("UIListLayout", tabBar)
+    layout.FillDirection = Enum.FillDirection.Horizontal
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.Padding = UDim.new(0, 4)
 
-	local content = Instance.new("ScrollingFrame", contentHolder)
-	content.Size = UDim2.new(1, 0, 1, 0)
-	content.CanvasSize = UDim2.new(0, 0, 0, 0)
-	content.ScrollBarThickness = 3
-	content.BackgroundTransparency = 1
-	content.Visible = false
-	local layout = Instance.new("UIListLayout", content)
-	layout.Padding = UDim.new(0, 6)
-	layout.SortOrder = Enum.SortOrder.LayoutOrder
+    local contentHolder = Instance.new("Frame", main)
+    contentHolder.Size = UDim2.new(1, 0, 1, -75)
+    contentHolder.Position = UDim2.new(0, 0, 0, 70)
+    contentHolder.BackgroundTransparency = 1
 
-	tabBtn.MouseButton1Click:Connect(function()
-		for _, v in pairs(contentHolder:GetChildren()) do
-			if v:IsA("ScrollingFrame") then v.Visible = false end
-		end
-		content.Visible = true
-	end)
+    -- Giriş efekti
+    if config.Intro then
+        main.Size = UDim2.new(0, 0, 0, 0)
+        main.Visible = true
+        TweenService:Create(main, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {
+            Size = UDim2.new(0, 600, 0, 400)
+        }):Play()
+    else
+        main.Visible = true
+    end
 
-	local function addBaseElement()
-		local base = Instance.new("Frame")
-		base.Size = UDim2.new(1, -10, 0, 35)
-		base.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-		base.BorderSizePixel = 0
-		base.Parent = content
-		Instance.new("UICorner", base).CornerRadius = UDim.new(0, 4)
-		return base
-	end
+    function NovaUI:CreateTab(name)
+        local tabBtn = Instance.new("TextButton", tabBar)
+        tabBtn.Size = UDim2.new(0, 100, 1, 0)
+        tabBtn.Text = name
+        tabBtn.Font = Enum.Font.GothamBold
+        tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tabBtn.TextSize = 14
+        tabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        Instance.new("UICorner", tabBtn).CornerRadius = UDim.new(0, 4)
 
-	local api = {}
+        local content = Instance.new("ScrollingFrame", contentHolder)
+        content.Size = UDim2.new(1, 0, 1, 0)
+        content.Visible = false
+        content.CanvasSize = UDim2.new(0, 0, 0, 0)
+        content.ScrollBarThickness = 4
+        content.BackgroundTransparency = 1
+        local list = Instance.new("UIListLayout", content)
+        list.Padding = UDim.new(0, 6)
+        list.SortOrder = Enum.SortOrder.LayoutOrder
 
-	function api:Button(text, callback)
-		local btn = addBaseElement()
-		local b = Instance.new("TextButton", btn)
-		b.Size = UDim2.new(1, 0, 1, 0)
-		b.Text = text
-		b.BackgroundTransparency = 1
-		b.TextColor3 = Color3.fromRGB(255, 255, 255)
-		b.Font = Enum.Font.Gotham
-		b.TextSize = 14
-		b.MouseButton1Click:Connect(callback)
-	end
+        tabBtn.MouseButton1Click:Connect(function()
+            for _, v in pairs(contentHolder:GetChildren()) do
+                if v:IsA("ScrollingFrame") then
+                    v.Visible = false
+                end
+            end
+            content.Visible = true
+        end)
 
-	function api:Toggle(text, default, callback)
-		local toggled = default
-		local box = addBaseElement()
+        local function elementBase()
+            local frame = Instance.new("Frame")
+            frame.Size = UDim2.new(1, -10, 0, 35)
+            frame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 4)
+            frame.BorderSizePixel = 0
+            frame.Parent = content
+            return frame
+        end
 
-		local label = Instance.new("TextLabel", box)
-		label.Text = text .. ": " .. (toggled and "ON" or "OFF")
-		label.Size = UDim2.new(1, -10, 1, 0)
-		label.Position = UDim2.new(0, 10, 0, 0)
-		label.BackgroundTransparency = 1
-		label.TextColor3 = Color3.fromRGB(255, 255, 255)
-		label.Font = Enum.Font.Gotham
-		label.TextSize = 14
-		label.TextXAlignment = Enum.TextXAlignment.Left
+        local api = {}
 
-		box.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
-				toggled = not toggled
-				label.Text = text .. ": " .. (toggled and "ON" or "OFF")
-				callback(toggled)
-			end
-		end)
-	end
+        function api:Button(text, callback)
+            local f = elementBase()
+            local btn = Instance.new("TextButton", f)
+            btn.Size = UDim2.new(1, 0, 1, 0)
+            btn.Text = text
+            btn.Font = Enum.Font.Gotham
+            btn.TextSize = 14
+            btn.BackgroundTransparency = 1
+            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            btn.MouseEnter:Connect(function()
+                TweenService:Create(f, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(55, 55, 55)}):Play()
+            end)
+            btn.MouseLeave:Connect(function()
+                TweenService:Create(f, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
+            end)
+            btn.MouseButton1Click:Connect(callback)
+        end
 
-	function api:Textbox(placeholder, callback)
-		local box = addBaseElement()
+        function api:Toggle(text, default, callback)
+            local toggled = default
+            local f = elementBase()
+            local lbl = Instance.new("TextLabel", f)
+            lbl.Text = text .. ": " .. (default and "ON" or "OFF")
+            lbl.Font = Enum.Font.Gotham
+            lbl.TextSize = 14
+            lbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+            lbl.BackgroundTransparency = 1
+            lbl.Size = UDim2.new(1, -10, 1, 0)
+            lbl.Position = UDim2.new(0, 10, 0, 0)
+            f.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    toggled = not toggled
+                    lbl.Text = text .. ": " .. (toggled and "ON" or "OFF")
+                    callback(toggled)
+                end
+            end)
+        end
 
-		local input = Instance.new("TextBox", box)
-		input.PlaceholderText = placeholder
-		input.Size = UDim2.new(1, -20, 1, 0)
-		input.Position = UDim2.new(0, 10, 0, 0)
-		input.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-		input.TextColor3 = Color3.fromRGB(255, 255, 255)
-		input.Font = Enum.Font.Gotham
-		input.TextSize = 14
-		input.ClearTextOnFocus = false
-		Instance.new("UICorner", input).CornerRadius = UDim.new(0, 3)
+        function api:Textbox(placeholder, callback)
+            local f = elementBase()
+            local box = Instance.new("TextBox", f)
+            box.PlaceholderText = placeholder
+            box.Size = UDim2.new(1, -20, 1, 0)
+            box.Position = UDim2.new(0, 10, 0, 0)
+            box.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            box.TextColor3 = Color3.fromRGB(255, 255, 255)
+            box.Font = Enum.Font.Gotham
+            box.TextSize = 14
+            Instance.new("UICorner", box).CornerRadius = UDim.new(0, 4)
+            box.FocusLost:Connect(function()
+                callback(box.Text)
+            end)
+        end
 
-		input.FocusLost:Connect(function()
-			callback(input.Text)
-		end)
-	end
+        function api:Dropdown(title, options, callback)
+            local f = elementBase()
+            local selected = options[1]
+            local btn = Instance.new("TextButton", f)
+            btn.Size = UDim2.new(1, 0, 1, 0)
+            btn.Text = title .. ": " .. selected
+            btn.Font = Enum.Font.Gotham
+            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            btn.BackgroundTransparency = 1
+            btn.TextSize = 14
+            btn.MouseButton1Click:Connect(function()
+                local new = options[math.random(1, #options)]
+                selected = new
+                btn.Text = title .. ": " .. new
+                callback(new)
+            end)
+        end
 
-	function api:Dropdown(name, options, callback)
-		local selected = options[1]
-		local box = addBaseElement()
+        function api:Bind(text, defaultKey, callback)
+            local f = elementBase()
+            local current = defaultKey
+            local lbl = Instance.new("TextLabel", f)
+            lbl.Text = text .. ": [" .. current.Name .. "]"
+            lbl.Font = Enum.Font.Gotham
+            lbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+            lbl.Size = UDim2.new(1, -10, 1, 0)
+            lbl.Position = UDim2.new(0, 10, 0, 0)
+            lbl.BackgroundTransparency = 1
+            lbl.TextSize = 14
+            f.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    lbl.Text = text .. ": [ ... ]"
+                    local conn
+                    conn = UserInputService.InputBegan:Connect(function(key)
+                        if key.KeyCode ~= Enum.KeyCode.Unknown then
+                            current = key.KeyCode
+                            lbl.Text = text .. ": [" .. current.Name .. "]"
+                            callback(current)
+                            conn:Disconnect()
+                        end
+                    end)
+                end
+            end)
+        end
 
-		local dd = Instance.new("TextButton", box)
-		dd.Size = UDim2.new(1, 0, 1, 0)
-		dd.Text = name .. ": " .. selected
-		dd.BackgroundTransparency = 1
-		dd.TextColor3 = Color3.fromRGB(255, 255, 255)
-		dd.Font = Enum.Font.Gotham
-		dd.TextSize = 14
+        function api:Colorpicker(text, default, callback)
+            local f = elementBase()
+            local box = Instance.new("TextButton", f)
+            box.Size = UDim2.new(1, 0, 1, 0)
+            box.Text = text
+            box.Font = Enum.Font.Gotham
+            box.TextColor3 = Color3.fromRGB(255, 255, 255)
+            box.BackgroundColor3 = default
+            box.TextSize = 14
+            Instance.new("UICorner", box).CornerRadius = UDim.new(0, 4)
+            box.MouseButton1Click:Connect(function()
+                local color = Color3.fromRGB(math.random(0,255), math.random(0,255), math.random(0,255))
+                box.BackgroundColor3 = color
+                callback(color)
+            end)
+        end
 
-		dd.MouseButton1Click:Connect(function()
-			local opt = options[math.random(1, #options)]
-			selected = opt
-			dd.Text = name .. ": " .. opt
-			callback(opt)
-		end)
-	end
-
-	function api:Bind(text, defaultKey, callback)
-		local key = defaultKey
-		local box = addBaseElement()
-
-		local label = Instance.new("TextLabel", box)
-		label.Size = UDim2.new(1, -10, 1, 0)
-		label.Position = UDim2.new(0, 10, 0, 0)
-		label.Text = text .. ": [" .. key.Name .. "]"
-		label.Font = Enum.Font.Gotham
-		label.TextColor3 = Color3.fromRGB(255, 255, 255)
-		label.BackgroundTransparency = 1
-		label.TextSize = 14
-		label.TextXAlignment = Enum.TextXAlignment.Left
-
-		box.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
-				label.Text = text .. ": [ ... ]"
-				local conn
-				conn = UserInputService.InputBegan:Connect(function(k)
-					if k.KeyCode ~= Enum.KeyCode.Unknown then
-						key = k.KeyCode
-						label.Text = text .. ": [" .. key.Name .. "]"
-						callback(key)
-						conn:Disconnect()
-					end
-				end)
-			end
-		end)
-	end
-
-	function api:Colorpicker(text, defaultColor, callback)
-		local color = defaultColor
-		local box = addBaseElement()
-
-		local button = Instance.new("TextButton", box)
-		button.Size = UDim2.new(1, 0, 1, 0)
-		button.Text = text
-		button.BackgroundColor3 = color
-		button.TextColor3 = Color3.fromRGB(255, 255, 255)
-		button.Font = Enum.Font.Gotham
-		button.TextSize = 14
-		Instance.new("UICorner", button).CornerRadius = UDim.new(0, 3)
-
-		button.MouseButton1Click:Connect(function()
-			local r = math.random(0,255)
-			local g = math.random(0,255)
-			local b = math.random(0,255)
-			local new = Color3.fromRGB(r,g,b)
-			button.BackgroundColor3 = new
-			callback(new)
-		end)
-	end
-
-	return api
+        content.Visible = #contentHolder:GetChildren() == 1
+        return api
+    end
 end
 
 return NovaUI
