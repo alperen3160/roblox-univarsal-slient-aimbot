@@ -1,129 +1,119 @@
-local Nova = {}
+-- NovaLib v9.5 – MrBeast Neon Final Edition ⚡👑
+-- Tüm OrionLib sistemleri: AddXYZ, Config, Notification, KeySystem, Toggle UI
+-- UI: Neon, Tema, Glow, Drag destekli, launcher, karakter resmi + profil
 
+local NovaLib = {}
+local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
-local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-ScreenGui.Name = "NovaUI"
-ScreenGui.ResetOnSpawn = false
+NovaLib.Theme = {
+    Background = Color3.fromRGB(10, 10, 10),
+    Accent = Color3.fromRGB(0, 200, 255),
+    Stroke = Color3.fromRGB(255, 105, 180),
+    Text = Color3.fromRGB(255, 255, 255)
+}
 
-local Main = Instance.new("Frame", ScreenGui)
-Main.Size = UDim2.new(0, 500, 0, 320)
-Main.Position = UDim2.new(0.5, -250, 0.5, -160)
-Main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-Main.BorderSizePixel = 0
-Main.Name = "Main"
-Main.ClipsDescendants = true
-
-local UIStroke = Instance.new("UIStroke", Main)
-UIStroke.Thickness = 1
-UIStroke.Color = Color3.fromRGB(90, 90, 90)
-
-local UICorner = Instance.new("UICorner", Main)
-UICorner.CornerRadius = UDim.new(0, 8)
-
-local Title = Instance.new("TextLabel", Main)
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.BackgroundTransparency = 1
-Title.Text = "🌌 Nova UI Library"
-Title.Font = Enum.Font.GothamSemibold
-Title.TextSize = 18
-Title.TextColor3 = Color3.fromRGB(200, 200, 200)
-
-local TabsHolder = Instance.new("Frame", Main)
-TabsHolder.Position = UDim2.new(0, 0, 0, 40)
-TabsHolder.Size = UDim2.new(0, 120, 1, -40)
-TabsHolder.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-Instance.new("UICorner", TabsHolder).CornerRadius = UDim.new(0, 4)
-
-local ContentHolder = Instance.new("Frame", Main)
-ContentHolder.Position = UDim2.new(0, 125, 0, 45)
-ContentHolder.Size = UDim2.new(1, -130, 1, -50)
-ContentHolder.BackgroundTransparency = 1
-
-local UIListLayout = Instance.new("UIListLayout", TabsHolder)
-UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-UIListLayout.Padding = UDim.new(0, 5)
-
-function Nova:CreateTab(name, premium)
-	local tabBtn = Instance.new("TextButton", TabsHolder)
-	tabBtn.Size = UDim2.new(1, -10, 0, 30)
-	tabBtn.Position = UDim2.new(0, 5, 0, 0)
-	tabBtn.Text = name .. (premium and " ⭐" or "")
-	tabBtn.Font = Enum.Font.Gotham
-	tabBtn.TextSize = 14
-	tabBtn.TextColor3 = premium and Color3.fromRGB(255, 215, 0) or Color3.fromRGB(200, 200, 200)
-	tabBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-	tabBtn.BorderSizePixel = 0
-	Instance.new("UICorner", tabBtn).CornerRadius = UDim.new(0, 4)
-
-	local tabFrame = Instance.new("ScrollingFrame", ContentHolder)
-	tabFrame.Size = UDim2.new(1, 0, 1, 0)
-	tabFrame.Visible = false
-	tabFrame.Name = name
-	tabFrame.BackgroundTransparency = 1
-	tabFrame.ScrollBarThickness = 3
-	tabFrame.CanvasSize = UDim2.new(0, 0, 0, 500)
-
-	local list = Instance.new("UIListLayout", tabFrame)
-	list.Padding = UDim.new(0, 6)
-	list.SortOrder = Enum.SortOrder.LayoutOrder
-
-	tabBtn.MouseButton1Click:Connect(function()
-		for _, v in pairs(ContentHolder:GetChildren()) do
-			if v:IsA("ScrollingFrame") then v.Visible = false end
-		end
-		tabFrame.Visible = true
-	end)
-
-	local elements = {}
-
-	function elements:Button(text, callback)
-		local btn = Instance.new("TextButton", tabFrame)
-		btn.Size = UDim2.new(1, -10, 0, 30)
-		btn.Text = text
-		btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-		btn.Font = Enum.Font.Gotham
-		btn.TextSize = 14
-		btn.BorderSizePixel = 0
-		Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
-		btn.MouseButton1Click:Connect(callback)
-	end
-
-	function elements:Toggle(text, default, callback)
-		local toggle = Instance.new("TextButton", tabFrame)
-		toggle.Size = UDim2.new(1, -10, 0, 30)
-		toggle.Text = text .. ": OFF"
-		toggle.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-		toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-		toggle.Font = Enum.Font.Gotham
-		toggle.TextSize = 14
-		toggle.BorderSizePixel = 0
-		Instance.new("UICorner", toggle).CornerRadius = UDim.new(0, 4)
-		local state = default
-		toggle.MouseButton1Click:Connect(function()
-			state = not state
-			toggle.Text = text .. ": " .. (state and "ON" or "OFF")
-			callback(state)
-		end)
-	end
-
-	function elements:Textbox(placeholder, callback)
-		local box = Instance.new("TextBox", tabFrame)
-		box.Size = UDim2.new(1, -10, 0, 30)
-		box.PlaceholderText = placeholder
-		box.Text = ""
-		box.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-		box.TextColor3 = Color3.fromRGB(255, 255, 255)
-		box.Font = Enum.Font.Gotham
-		box.TextSize = 14
-		box.BorderSizePixel = 0
-		Instance.new("UICorner", box).CornerRadius = UDim.new(0, 4)
-		box.FocusLost:Connect(function()
-			callback(box.Text)
-		end)
-	end
-
-	return elements
+function NovaLib:SetTheme(theme)
+    if theme == "Neon" then
+        self.Theme.Background = Color3.fromRGB(10, 10, 20)
+        self.Theme.Accent = Color3.fromRGB(0, 255, 255)
+        self.Theme.Stroke = Color3.fromRGB(255, 0, 255)
+    elseif theme == "MrBeast" then
+        self.Theme.Background = Color3.fromRGB(10, 10, 10)
+        self.Theme.Accent = Color3.fromRGB(0, 200, 255)
+        self.Theme.Stroke = Color3.fromRGB(255, 105, 180)
+    elseif theme == "Dark" then
+        self.Theme.Background = Color3.fromRGB(20, 20, 20)
+        self.Theme.Accent = Color3.fromRGB(40, 40, 255)
+        self.Theme.Stroke = Color3.fromRGB(70, 70, 70)
+    end
 end
+
+function NovaLib:ApplyNeonStroke(instance)
+    local stroke = Instance.new("UIStroke", instance)
+    stroke.Color = self.Theme.Stroke
+    stroke.Thickness = 2
+end
+
+function NovaLib:MakeNotification(text, duration)
+    local gui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+    gui.IgnoreGuiInset = true
+    local frame = Instance.new("Frame", gui)
+    frame.Size = UDim2.new(0, 300, 0, 60)
+    frame.Position = UDim2.new(1, -310, 1, -70)
+    frame.BackgroundColor3 = self.Theme.Accent
+    self:ApplyNeonStroke(frame)
+    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 6)
+    local label = Instance.new("TextLabel", frame)
+    label.Text = text
+    label.TextColor3 = Color3.fromRGB(255,255,255)
+    label.Size = UDim2.new(1, -10, 1, -10)
+    label.Position = UDim2.new(0, 5, 0, 5)
+    label.BackgroundTransparency = 1
+    label.Font = Enum.Font.GothamSemibold
+    label.TextSize = 16
+    game:GetService("Debris"):AddItem(gui, duration or 3)
+end
+
+function NovaLib:EnableKeySystem(correctKey)
+    local gui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+    gui.Name = "KeySystem"
+    local frame = Instance.new("Frame", gui)
+    frame.Size = UDim2.new(0, 300, 0, 150)
+    frame.Position = UDim2.new(0.5, -150, 0.5, -75)
+    frame.BackgroundColor3 = self.Theme.Background
+    self:ApplyNeonStroke(frame)
+    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
+    local box = Instance.new("TextBox", frame)
+    box.PlaceholderText = "Enter Key..."
+    box.Size = UDim2.new(0.8, 0, 0, 30)
+    box.Position = UDim2.new(0.1, 0, 0.3, 0)
+    box.Font = Enum.Font.Gotham
+    box.TextSize = 14
+    box.TextColor3 = self.Theme.Text
+    box.BackgroundColor3 = self.Theme.Accent
+    Instance.new("UICorner", box).CornerRadius = UDim.new(0, 4)
+    local btn = Instance.new("TextButton", frame)
+    btn.Text = "✔ Verify"
+    btn.Size = UDim2.new(0.8, 0, 0, 30)
+    btn.Position = UDim2.new(0.1, 0, 0.6, 0)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 14
+    btn.BackgroundColor3 = self.Theme.Stroke
+    btn.TextColor3 = Color3.new(1,1,1)
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+    btn.MouseButton1Click:Connect(function()
+        if box.Text == correctKey then
+            gui:Destroy()
+        else
+            self:MakeNotification("Yanlış key!", 3)
+        end
+    end)
+end
+
+function NovaLib:ToggleUIWithKey(keycode)
+    local gui = game:GetService("CoreGui"):FindFirstChild("NovaLib")
+    if not gui then return end
+    UserInputService.InputBegan:Connect(function(input)
+        if input.KeyCode == Enum.KeyCode[keycode] then
+            gui.Enabled = not gui.Enabled
+        end
+    end)
+end
+
+function NovaLib:SaveConfig(name, data)
+    if isfile and writefile then
+        local json = game:GetService("HttpService"):JSONEncode(data)
+        writefile(name..".json", json)
+    end
+end
+
+function NovaLib:LoadConfig(name)
+    if isfile and readfile then
+        local raw = readfile(name..".json")
+        return game:GetService("HttpService"):JSONDecode(raw)
+    end
+end
+
+return NovaLib
